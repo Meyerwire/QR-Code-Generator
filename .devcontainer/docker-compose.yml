@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  qr-code-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile.devcontainer
+    # HIER legst du den Namen fest, der in Docker Desktop erscheint:
+    container_name: QRCodeGeneratorDevContainer
+
+    volumes:
+      # Mountet dein Projekt-Verzeichnis in den Container
+      - ../:/workspace
+
+    # Hält den Container am Laufen
+    command: sleep infinity

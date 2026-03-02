@@ -1,0 +1,32 @@
+{
+    "name": "QR Code Generator Dev Container",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "qrcode-generator",
+    "workspaceFolder": "/workspace",
+
+    "forwardPorts": [3000],
+
+    // Konfigurationen für VS Code im Container
+    "customizations": {
+        "vscode": {
+        "settings": {
+            // Setzt Prettier als Standard-Formatierer
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+            "editor.formatOnSave": true,
+            "[astro]": {
+            "editor.defaultFormatter": "astro-build.astro-vscode"
+            }
+        },
+        // Installiert automatisch diese Extensions im Container
+        "extensions": [
+            "esbenp.prettier-vscode", // Code Formatting
+            "bradlc.vscode-tailwindcss", // Tailwind CSS IntelliSense
+            "dbaeumer.vscode-eslint", // Linting
+            "dsznajder.es7-react-js-snippets"
+        ]
+        }
+    },
+    "postCreateCommand": "npm install",
+    "remoteUser": "node",
+    "updateRemoteUserUID": true
+}
