@@ -1,7 +1,7 @@
 {
     "name": "QR Code Generator Dev Container",
     "dockerComposeFile": "docker-compose.yml",
-    "service": "qrcode-generator",
+    "service": "qr-code-generator",
     "workspaceFolder": "/workspace",
 
     "forwardPorts": [3000],
