@@ -19,11 +19,15 @@ export default function QRCodePage() {
   const qrCode = useRef<QRCodeStyling | null>(null);
 
   // Dark Mode Effekt: Fügt die 'dark' Klasse zum HTML-Tag hinzu
+  // Dark Mode Effekt
   useEffect(() => {
+    const root = window.document.documentElement;
     if (darkMode) {
-      document.documentElement.classList.add("dark");
+      root.classList.add("dark");
+      console.log("Dark Mode aktiv"); // Debugging
     } else {
-      document.documentElement.classList.remove("dark");
+      root.classList.remove("dark");
+      console.log("Light Mode aktiv"); // Debugging
     }
   }, [darkMode]);
 
@@ -61,10 +65,7 @@ export default function QRCodePage() {
       {/* Header mit Toggle */}
       <div className="max-w-5xl mx-auto flex justify-between items-center mb-8">
         <h1 className="text-2xl font-black italic tracking-tighter text-blue-600 dark:text-blue-400">
-          QR-DESIGNER{" "}
-          <span className="text-[10px] font-normal not-italic align-top ml-1 border px-1 rounded">
-            PRO
-          </span>
+          QR-Generator
         </h1>
         <button
           onClick={() => setDarkMode(!darkMode)}
