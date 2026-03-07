@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type QRCodeStyling from "qr-code-styling";
 import { DotType, CornerSquareType } from "qr-code-styling";
-import { Sun, Moon, Download, Share2 } from "lucide-react"; // npm install lucide-react für schicke Icons
+import { Sun, Moon, Download, Share2 } from "lucide-react";
 
 export default function QRCodePage() {
   const [darkMode, setDarkMode] = useState(false);
