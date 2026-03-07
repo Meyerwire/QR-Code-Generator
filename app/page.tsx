@@ -84,7 +84,7 @@ export default function QRCodePage() {
         <div className="w-full md:w-96 p-8 bg-slate-100 dark:bg-slate-800/50 space-y-6">
           <section>
             <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
-              Inhalt
+              Inhalt - was soll der QR-Code darstellen?
             </label>
             <input
               type="text"
