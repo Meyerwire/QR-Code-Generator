@@ -9,6 +9,8 @@ So i used the Opportunity, to do this as my first little next.js project.
 
 Is next a little overkill? Maybe. Do i care? No. Was it fun? Yes!
 
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
