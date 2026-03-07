@@ -1,164 +1,193 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { QRCodeCanvas } from "qrcode.react";
+import { useEffect, useRef, useState } from "react";
+import type QRCodeStyling from "qr-code-styling";
+import { DotType, CornerSquareType, CornerDotType } from "qr-code-styling";
 
 export default function QRCodePage() {
-  // States für die QR-Konfiguration
-  const [value, setValue] = useState("https://nextjs.org");
-  const [size, setSize] = useState(256);
-  const [fgColor, setFgColor] = useState("#000000");
-  const [logo, setLogo] = useState<string | null>(null);
-  const [logoSize, setLogoSize] = useState(50);
+  const [options, setOptions] = useState({
+    value: "https://nextjs.org",
+    dotsType: "squares" as DotType,
+    cornersType: "square" as CornerSquareType,
+    color: "#000000",
+    logo: null as string | null,
+  });
 
-  // Hilfsfunktion für den Logo-Upload
+  const qrRef = useRef<HTMLDivElement>(null);
+  const qrCode = useRef<QRCodeStyling | null>(null);
+
+  // Dynamischer Import der Library (wichtig für Next.js SSR)
+  useEffect(() => {
+    import("qr-code-styling").then((Module) => {
+      qrCode.current = new Module.default({
+        width: 300,
+        height: 300,
+        type: "svg",
+        data: options.value,
+        image: options.logo || "",
+        dotsOptions: { color: options.color, type: options.dotsType },
+        cornersSquareOptions: {
+          color: options.color,
+          type: options.cornersType,
+        },
+        backgroundOptions: { color: "#ffffff" },
+        imageOptions: { crossOrigin: "anonymous", margin: 5, excavate: true },
+      });
+
+      if (qrRef.current) {
+        qrCode.current.append(qrRef.current);
+      }
+    });
+  }, []);
+
+  // Update-Effekt bei jeder Änderung der Stats
+  useEffect(() => {
+    if (qrCode.current) {
+      qrCode.current.update({
+        data: options.value,
+        image: options.logo || "",
+        dotsOptions: { color: options.color, type: options.dotsType },
+        cornersSquareOptions: {
+          color: options.color,
+          type: options.cornersType,
+        },
+      });
+    }
+  }, [options]);
+
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setLogo(reader.result as string);
+        setOptions((prev) => ({ ...prev, logo: reader.result as string }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Download-Funktion
-  const downloadQRCode = () => {
-    const canvas = document.getElementById("qr-canvas") as HTMLCanvasElement;
-    if (canvas) {
-      const pngUrl = canvas
-        .toDataURL("image/png")
-        .replace("image/png", "image/octet-stream");
-      const downloadLink = document.createElement("a");
-      downloadLink.href = pngUrl;
-      downloadLink.download = "qrcode-generator.png";
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-    }
+  const download = (ext: "png" | "svg") => {
+    qrCode.current?.download({ name: "qr-code", extension: ext });
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-gray-900">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl border border-gray-100 flex flex-col md:flex-row gap-8">
-        {/* Linke Seite: Einstellungen */}
-        <div className="flex-1 space-y-6">
-          <h1 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            QR Generator
+    <main className="min-h-screen bg-slate-50 p-4 md:p-10 text-slate-900">
+      <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+        {/* Sidebar: Controls */}
+        <div className="w-full md:w-96 p-8 bg-slate-100 space-y-6">
+          <h1 className="text-2xl font-black italic tracking-tighter text-blue-600">
+            QR-DESIGNER
           </h1>
 
           <div className="space-y-4">
-            {/* Text Input */}
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Inhalt / URL
+            <section>
+              <label className="text-xs font-bold uppercase text-slate-500">
+                Inhalt
               </label>
               <input
                 type="text"
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none border-gray-200"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder="https://deine-seite.de"
+                className="w-full mt-1 p-3 rounded-xl border-none shadow-sm focus:ring-2 focus:ring-blue-500"
+                value={options.value}
+                onChange={(e) =>
+                  setOptions((prev) => ({ ...prev, value: e.target.value }))
+                }
               />
-            </div>
+            </section>
 
-            {/* Design Optionen */}
-            <div className="grid grid-cols-2 gap-4">
+            <section className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700">
-                  Farbe
+                <label className="text-xs font-bold uppercase text-slate-500">
+                  Punkt-Stil
                 </label>
-                <input
-                  type="color"
-                  className="w-full h-10 border rounded-lg cursor-pointer p-1"
-                  value={fgColor}
-                  onChange={(e) => setFgColor(e.target.value)}
-                />
+                <select
+                  className="w-full mt-1 p-2 rounded-lg bg-white border-none shadow-sm text-sm"
+                  value={options.dotsType}
+                  onChange={(e) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      dotsType: e.target.value as DotType,
+                    }))
+                  }
+                >
+                  <option value="squares">Klassisch</option>
+                  <option value="dots">Punkte</option>
+                  <option value="rounded">Abgerundet</option>
+                  <option value="extra-rounded">Liquid</option>
+                </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700">
-                  Größe (px)
+                <label className="text-xs font-bold uppercase text-slate-500">
+                  Ecken-Stil
                 </label>
-                <input
-                  type="number"
-                  className="w-full p-2 border rounded-lg border-gray-200"
-                  value={size}
-                  onChange={(e) => setSize(Number(e.target.value))}
-                />
+                <select
+                  className="w-full mt-1 p-2 rounded-lg bg-white border-none shadow-sm text-sm"
+                  value={options.cornersType}
+                  onChange={(e) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      cornersType: e.target.value as CornerSquareType,
+                    }))
+                  }
+                >
+                  <option value="square">Eckig</option>
+                  <option value="dot">Rund</option>
+                  <option value="extra-rounded">Soft</option>
+                </select>
               </div>
-            </div>
+            </section>
 
-            {/* Logo Upload */}
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Logo (Optional)
+            <section>
+              <label className="text-xs font-bold uppercase text-slate-500">
+                Farbe
+              </label>
+              <input
+                type="color"
+                className="w-full mt-1 h-10 rounded-lg cursor-pointer border-none shadow-sm"
+                value={options.color}
+                onChange={(e) =>
+                  setOptions((prev) => ({ ...prev, color: e.target.value }))
+                }
+              />
+            </section>
+
+            <section>
+              <label className="text-xs font-bold uppercase text-slate-500">
+                Logo
               </label>
               <input
                 type="file"
                 accept="image/*"
+                className="w-full mt-1 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white"
                 onChange={handleLogoUpload}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
               />
-              {logo && (
-                <div className="mt-2 flex items-center gap-4">
-                  <label className="text-xs text-gray-500 whitespace-nowrap">
-                    Logo Größe:
-                  </label>
-                  <input
-                    type="range"
-                    min="20"
-                    max="80"
-                    value={logoSize}
-                    onChange={(e) => setLogoSize(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  />
-                  <button
-                    onClick={() => setLogo(null)}
-                    className="text-xs text-red-500 hover:underline"
-                  >
-                    Entfernen
-                  </button>
-                </div>
-              )}
-            </div>
+            </section>
           </div>
         </div>
 
-        {/* Rechte Seite: Preview & Action */}
-        <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 rounded-xl p-6 border border-gray-100 border-dashed">
-          <div className="bg-white p-4 shadow-md rounded-lg">
-            <QRCodeCanvas
-              id="qr-canvas"
-              value={value || " "}
-              size={size}
-              fgColor={fgColor}
-              level={"H"}
-              includeMargin={true}
-              imageSettings={
-                logo
-                  ? {
-                      src: logo,
-                      height: logoSize,
-                      width: logoSize,
-                      excavate: true,
-                    }
-                  : undefined
-              }
+        {/* Main Area: Preview */}
+        <div className="flex-1 p-8 flex flex-col items-center justify-center space-y-8 bg-white">
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+            <div
+              ref={qrRef}
+              className="relative bg-white p-6 rounded-xl shadow-inner border border-slate-100"
             />
           </div>
 
-          <button
-            onClick={downloadQRCode}
-            disabled={!value}
-            className="mt-8 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-200 disabled:opacity-50 active:scale-95"
-          >
-            Download PNG
-          </button>
-          <p className="mt-4 text-xs text-gray-400 text-center">
-            Tipp: Nutze helle Logos auf dunklen QR-Farben für optimalen
-            Kontrast.
-          </p>
+          <div className="flex gap-4">
+            <button
+              onClick={() => download("png")}
+              className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-lg"
+            >
+              PNG Export
+            </button>
+            <button
+              onClick={() => download("svg")}
+              className="px-8 py-3 bg-white border-2 border-slate-900 text-slate-900 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-95"
+            >
+              SVG Vector
+            </button>
+          </div>
         </div>
       </div>
     </main>
