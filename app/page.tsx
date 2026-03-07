@@ -14,7 +14,7 @@ export default function QRCodePage() {
       const pngUrl = canvas
         .toDataURL("image/png")
         .replace("image/png", "image/octet-stream");
-      let downloadLink = document.createElement("a");
+      const downloadLink = document.createElement("a");
       downloadLink.href = pngUrl;
       downloadLink.download = "qrcode.png";
       document.body.appendChild(downloadLink);
@@ -26,7 +26,7 @@ export default function QRCodePage() {
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-gray-900">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
-        <h1 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        <h1 className="text-2xl font-bold mb-6 text-center bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
           QR Code Generator
         </h1>
 
