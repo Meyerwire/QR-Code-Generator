@@ -1,3 +1,14 @@
+# QR-Code Gernerator
+
+I was annoyed, that most Online QR-Code generators create a short Link with a redirect.
+You need an Account and got Scan analytics.
+
+But i just wanted a QR-Code with the Data i want, no redirect, no Account.
+
+So i used the Opportunity, to do this as my first little next.js project.
+
+Is next a little overkill? Maybe. Do i care? No. Was it fun? Yes!
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -28,9 +39,3 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
